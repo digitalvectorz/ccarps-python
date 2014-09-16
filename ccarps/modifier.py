@@ -13,13 +13,14 @@ mod_table = {
 
 # base (2+dice_mod)d6
 # level: mod
-max_dice_mod = 3
 dice_mod = {
 	1: 0,
 	6: 1,
 	12: 2,
 	18: 3
 }
+
+max_dice_mod = 3
 
 inv_dice_mod = {
 	1: 3,

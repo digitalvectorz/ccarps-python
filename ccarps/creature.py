@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from ccarps import dice
+from ccarps import dice, modifier
 
 
 class Creature:
@@ -21,7 +21,6 @@ class Creature:
 			base = self.dice.random_stats(rank)
 		else:
 			return 'Invalid attribute argument.'
-
 
 		# Default name if none is presented.
 		self.name = 'Unnamed Creature'
@@ -53,30 +52,34 @@ class Creature:
 		self.health = self.max_health
 
 		# Here's the skill handler dictionary.
-		self.skills = {}  
+		self.skills = {
+			'some skill': 0
+		}
 
 	def action(skill, base_tn):
 		'''
-		Action handler, be it combat, using skill, or trying
+		Action handler for combat, using skill, or trying
 		to stop from falling out of an airship...
 		'''
 
-		'''
+		# Set the default action modifier and number of dice
+		# and set the default success to fail.
+		success = 0
 		action_mod = 0
 		num_dice = 2
 		tn = base_tn + action_mod
 
 		if skill in self.skills:
-			skill_mod = modifier.find(self.skills[skill]['level'])
+			skill_mod = modifier.find(self.skills[skill])
 			num_dice = 2 + modifier.dice(skill_mod)
 
 		roll = self.dice.roll(qty=num_dice)
 		lowest = self.dice.low(roll)
 
-
 		if lowest < tn:
 			success = 1
-		'''
+
+		return success
 
 	def take_damage(self, damage, type):
 		'''
@@ -108,12 +111,10 @@ class Creature:
 			if type is 'spiritual':
 				self.dead = 1
 
-
 	def heal(self, amount, type):
 		self.health[type] += amount
 		if self.health[type] > self.max_health[type]:
 			self.health[type] = self.max_health[type]
-
 
 	def distance(points):
 		'''

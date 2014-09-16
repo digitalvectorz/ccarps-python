@@ -23,15 +23,18 @@ def test_creature_health():
 	assert c.health['physical'] is 10
 	assert c.health['spiritual'] is 10
 
+
 def test_creature_take_damage():
 	c.take_damage(5, 'mental')
 	assert c.health['mental'] is 5
 
-def  test_creature_heal():
+
+def test_creature_heal():
 	assert c.health['mental'] is 5
 	c.heal(5, 'mental')
 	for health in c.health:
 		assert c.health[health] is 10
+
 
 def test_creature_complex_damage():
 	for health in c.health:
@@ -42,3 +45,16 @@ def test_creature_complex_damage():
 	assert c.health['physical'] is 0
 	assert c.health['spiritual'] is 5
 
+	for health in c.health:
+		c.heal(10, health)
+		print c.health[health]
+
+	assert c.health['mental'] is 10
+	assert c.health['physical'] is 10
+	assert c.health['spiritual'] is 10
+
+	c.take_damage(9, 'spiritual')
+	assert c.health['spiritual'] is 1
+	
+	c.take_damage(1, 'spiritual')
+	assert c.dead is 1
