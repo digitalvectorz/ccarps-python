@@ -10,11 +10,15 @@ def test_creature_name():
 	assert c.name == 'Test Creature'
 
 
+def test_creature_distance():
+	assert c.distance(0) is 3
+
+
 def test_creature_stats():
 	assert type(c.CON) is int
 	assert type(c.INT) is int
 	assert type(c.STR) is int
-	assert type(c.WILL) is int
+	assert type(c.WIL) is int
 	assert type(c.DEX) is int
 
 
@@ -47,7 +51,6 @@ def test_creature_complex_damage():
 
 	for health in c.health:
 		c.heal(10, health)
-		print c.health[health]
 
 	assert c.health['mental'] is 10
 	assert c.health['physical'] is 10
