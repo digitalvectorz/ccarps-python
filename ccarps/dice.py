@@ -56,6 +56,9 @@ class Dice:
 		Needs to encompass both Options A and B
 		https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
 		'''
+		reroll_on = 0
+		dice_qty = 2  # the default
+
 		for i in age_table:
 			if age in age_table[i]:
 				if age >= 21:
@@ -63,7 +66,6 @@ class Dice:
 				dice_qty = age_table[i]
 
 		if rank is not None:
-			reroll_on = 0
 			if rank == 'Beginner':
 				dice_sets = 5
 			if rank == 'Novice' and age >= 18:

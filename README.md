@@ -1,4 +1,4 @@
-# python-ccarps, a Python bot framework.
+# python-ccarps, a Python CCARPS implementation.
 <pre>
 License:	Expat <http://scoundrels.mit-license.org>
 Authors:	See AUTHORS

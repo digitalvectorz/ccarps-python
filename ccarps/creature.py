@@ -8,45 +8,52 @@ class Creature:
 	Set up us the Creature! (Monsters, (N)PCs)
 	type = 'Novice', 'Beginner', 'Adventurer', 'Master'
 	'''
-	def __init__(self, type='empty', name=None):
-		if isinstance(type, str):
-			base = dice.random_stats(type)
+	def __init__(self, rank='empty', name=None):
+		# Initialize dice system
+		self.dice = dice.Dice()
+		self.roll = 0
+
+		# Dead: 0 = Alive, 1 = Dead, 2 = Undead/Other
+		self.dead = 0
+
+		# Randomly generate a creature based on rank passed.
+		if isinstance(rank, str):
+			base = self.dice.random_stats(rank)
 		else:
 			return 'Invalid attribute argument.'
 
-		self.dice = dice.Dice()
 
-		self.name = 'Creature'  # This should really be generated or input.
-
+		# Default name if none is presented.
+		self.name = 'Unnamed Creature'
 		if name is not None:
 			self.name = name
 
+		# Primary Stats
 		self.STR = int(base[0])
 		self.DEX = int(base[1])
 		self.CON = int(base[2])
 		self.INT = int(base[3])
 		self.WILL = int(base[4])
-		
-		self.health = {
-			'mental': 10,
-			'physical': 10,
-			'spritual': 10
-		}
-		
-		self.max_health = {
-			'mental': 10,
-			'physical': 10,
-			'spritual': 10
-		}
 
-		self.roll = 0
+		# Secondary Stats
 		self.CHR = (self.CON + self.INT + self.WILL) / 3
 		self.SPD = (self.STR + self.DEX) / 2
 		self.RFX = (self.STR + self.DEX + self.WILL) / 3
 		self.LFT = (self.STR + self.WILL) / 2
 		self.PER = (self.INT + self.WILL) / 2
+		
+		# Setting max health allows for modified health bars
+		self.max_health = {
+			'mental': 10,
+			'physical': 10,
+			'spiritual': 10
+		}
 
-		self.skills = {}  # Should load from a JSON file or sommat.
+		# Set initial health as full.
+		self.health = self.max_health
+
+		# Here's the skill handler dictionary.
+		self.skills = {}  
 
 	def action(skill, base_tn):
 		'''
@@ -72,22 +79,41 @@ class Creature:
 		'''
 
 	def take_damage(self, damage, type):
-		if damage > 0:
-			new_dmg = self.health[type] - damage
-			if new_dmg <= 0:
-				if self.health[type] == 'mental':
-					self.health[type] = 0
-					self.health['physical'] += new_dmg
-				if self.health[type] == 'physical':
-					self.health[type] = 0
-					self.health['spiritual'] += new_dmg
-				if self.health[type] == 'spiritual':
-					self.health[type] = new_dmg
+		'''
+		Take damage. If any damage is greater than 10, move to
+		the next health type. If all three are 0, set dead = True
+		'''
+		# Catch any invalid health types and return with list of available.
+		if type not in self.health:
+			return "Invalid damage type. Available: %s" % ', '.join(self.health)
+
+		# Apply initial damage to approriate type
+		self.health[type] -= damage
+		# If specified health type is zeror or above, return
+		if self.health[type] >= 0:
+			return
+
+		# If negative number, set value to 0
+		# Set damage to equal the negative remainder,
+		# and reverse it to positive.
+		if self.health[type] < 0:
+			damage = -self.health[type]
+			self.health[type] = 0
+
+			# Apply damage to the next health type.
+			if type is 'mental':
+				self.take_damage(damage, 'physical')
+			if type is 'physical':
+				self.take_damage(damage, 'spiritual')
+			if type is 'spiritual':
+				self.dead = 1
+
 
 	def heal(self, amount, type):
 		self.health[type] += amount
 		if self.health[type] > self.max_health[type]:
 			self.health[type] = self.max_health[type]
+
 
 	def distance(points):
 		'''
