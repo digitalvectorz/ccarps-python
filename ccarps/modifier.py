@@ -35,8 +35,9 @@ max_level = mod_table[max_mod][top_level_pos - 1]
 
 
 def dice(mod, invert=0):
-	if mod > 8:
+	if not isinstance(mod, int) or mod > 8:
 		return 'Invalid mod number.'
+
 	dmod = dice_mod
 	
 	if invert is 1:
