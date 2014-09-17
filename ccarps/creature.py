@@ -2,24 +2,20 @@
 # -*- coding: utf-8 -*-
 from ccarps import dice, modifier
 
-
+# Covers:
+# * https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
+# * https://github.com/WizardSpire/ccarps/blob/master/Combat.md
 class Creature:
 	'''
 	Set up us the Creature! (Monsters, (N)PCs)
-	https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
 	'''
 	def __init__(self, age=None, rank=None, name=None):
 		# Initialize dice system
 		self.dice = dice.Dice()
 		self.roll = 0
-
-		# Dead: 0 = Alive, 1 = Dead, 2 = Undead/Other
-		# Can be easily expanded upon by changing int.
-		self.dead = 0
-
-		# Status could perhaps be used to easily see if the character
-		# is standing, casting a spell, drowning, etc...
-		self.status = 0
+	
+		# Dead: -1 = undead, 0 = dead, 1 = alive(normal), 2 = alive(polymorphed)
+		self.status = 1
 
 		# Some defaults so that if creature.Creature() is invoked,
 		# a generic 21 year old human Novice will be created.
@@ -51,6 +47,9 @@ class Creature:
 			'physical': 10,
 			'spiritual': 10
 		}
+
+		# Set the initial stun timer.
+		self.stun_timer = 0
 
 		# Primary Attributes
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#primary-attributes
@@ -125,7 +124,7 @@ class Creature:
 	def take_damage(self, damage, type):
 		'''
 		Take damage. If any damage is greater than 10, move to
-		the next health type. If all three are 0, set dead = True
+		the next health type. If all three are 0, set status to 0.
 
 		Returns nothing on success, as it directly modifies self.health.
 		'''
@@ -149,7 +148,7 @@ class Creature:
 			if type is 'physical':
 				self.take_damage(damage, 'spiritual')
 			if type is 'spiritual' or self.health['spiritual'] is 0:
-				self.death()
+				self.update_status(0)
 
 	def heal(self, amount, type):
 		'''
@@ -157,9 +156,19 @@ class Creature:
 
 		Returns nothing as it directly modifies self.health.
 		'''
+		amt_healed = self.max_health[type] - self.health[type]
 		self.health[type] += amount
+
 		if self.health[type] > self.max_health[type]:
 			self.health[type] = self.max_health[type]
+
+		
+		ret = {
+			type: amt_healed
+		}
+
+		return ret
+
 
 	def distance(self, points):
 		'''
@@ -170,28 +179,29 @@ class Creature:
 		'''
 		return 3 + (points * 3)
 
-	def death(self):
+	def stun_recovery(self):
 		'''
-		Character has died.
+		For every 100 movement heal one stun.
+		This should be overridden by any game
+		that uses realtime (since the rules state
+		one box per ten minutes)
 		'''
-		self.dead = 1
+		if self.stun_timer > 0:
+			self.stun_timer -= 1
 
-	def stats(self):
-		stats = '''
-STR: %s
-DEX: %s
-CON: %s
-INT: %s
-WIL: %s
+		if self.stun_timer % 100 is 1:
+			self.heal(1, 'mental')
 
-CHR: %s
-SPD: %s
-RFX: %s
-LFT: %s
-PER: %s
-''' % (
-			self.STR, self.DEX, self.CON, self.INT, self.WIL,
-			self.CHR, self.SPD, self.RFX, self.LFT, self.PER
-		)
-		
-		return stats
+	def update_status(self, status_id):
+		'''
+		Creature's life status has changed.
+		'''
+		was = self.status
+		self.status = status_id
+
+		ret = {
+			'was': was,
+			'now': self.status
+		}
+
+		return ret
