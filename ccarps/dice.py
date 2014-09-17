@@ -71,7 +71,8 @@ class Dice:
 				return True
 
 		if age > 20:
-			if rank is 'Advanced' or rank is 'Heroic' or rank is 'Epic' or rank is 'Legendary':
+			if rank is 'Advanced' or rank is 'Heroic' \
+				or rank is 'Epic' or rank is 'Legendary':
 				return True
 
 		return False
@@ -84,7 +85,7 @@ class Dice:
 
 		# Setting default values.
 		reroll_on = 0
-		dice_sets = 1 
+		dice_sets = 1
 
 		dice_qty = self.by_age(age)
 		rank_check = self.rank_check(age, rank)
