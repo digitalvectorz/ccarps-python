@@ -19,9 +19,10 @@ def test_dice_roll_five():
 
 
 def test_dice_roll_sum():
-	roll = d.roll(5, 3)
+	roll = d.roll(qty=5, sets=3)
 	rollsum = d.sum(roll)
-	assert rollsum > 4 and rollsum < 91
+
+	assert rollsum in range(15, 91)
 
 
 def test_dice_lowest():
