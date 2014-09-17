@@ -17,6 +17,10 @@ class Creature:
 		# Can be easily expanded upon by changing int.
 		self.dead = 0
 
+		# Status could perhaps be used to easily see if the character
+		# is standing, casting a spell, drowning, etc...
+		self.status = 0
+
 		# Some defaults so that if creature.Creature() is invoked,
 		# a generic 21 year old human Novice will be created.
 		self.age = 21

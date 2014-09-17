@@ -1,0 +1,8 @@
+[report]
+omit =
+    */python?.?/*
+    */site-packages/nose/*
+
+[run]
+exclude_lines = 
+	pragma: no cover
