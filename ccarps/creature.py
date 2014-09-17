@@ -54,11 +54,11 @@ class Creature:
 
 		# Primary Attributes
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#primary-attributes
-		self.STR = int(base[0])
-		self.DEX = int(base[1])
-		self.CON = int(base[2])
-		self.INT = int(base[3])
-		self.WIL = int(base[4])
+		self.STR = base[0]
+		self.DEX = base[1]
+		self.CON = base[2]
+		self.INT = base[3]
+		self.WIL = base[4]
 
 		# Secondary Attributes
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#secondary-attributes
