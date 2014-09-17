@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from ccarps import dice, modifier
 
+
 # Covers:
 # * https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
 # * https://github.com/WizardSpire/ccarps/blob/master/Combat.md
@@ -121,7 +122,7 @@ class Creature:
 		if lowest < tn:
 			return lowest
 
-	def take_damage(self, damage, type):
+	def take_damage(self, damage, type, tracker=None):
 		'''
 		Take damage. If any damage is greater than 10, move to
 		the next health type. If all three are 0, set status to 0.
@@ -132,8 +133,18 @@ class Creature:
 		if type not in self.health:
 			return "Invalid damage type. Available: %s" % ', '.join(self.health)
 
+		# Lets us keep track of total damage of each heal type
+		# through the recursive damage system.
+		ret = {}
+
+		if tracker is not None:
+			ret = tracker
+
 		# Apply initial damage to approriate type
 		self.health[type] -= damage
+
+		# Get a copy so we can get the difference later.
+		ret[type] = damage
 
 		# If negative number, set value to 0
 		# Set damage to equal the negative remainder,
@@ -142,13 +153,18 @@ class Creature:
 			damage = -self.health[type]
 			self.health[type] = 0
 
+			# Get the difference so we have number of points healed.
+			ret[type] -= damage
+
 			# Apply damage to the next health type.
 			if type is 'mental':
-				self.take_damage(damage, 'physical')
+				self.take_damage(damage, 'physical', ret)
 			if type is 'physical':
-				self.take_damage(damage, 'spiritual')
+				self.take_damage(damage, 'spiritual', ret)
 			if type is 'spiritual' or self.health['spiritual'] is 0:
 				self.update_status(0)
+
+		return ret
 
 	def heal(self, amount, type):
 		'''
@@ -162,13 +178,11 @@ class Creature:
 		if self.health[type] > self.max_health[type]:
 			self.health[type] = self.max_health[type]
 
-		
 		ret = {
 			type: amt_healed
 		}
 
 		return ret
-
 
 	def distance(self, points):
 		'''
@@ -177,7 +191,11 @@ class Creature:
 
 		Returns the distance in feet.
 		'''
-		return 3 + (points * 3)
+		ret = {
+			'feet': 3 + (points * 3)
+		}
+
+		return ret
 
 	def stun_recovery(self):
 		'''
