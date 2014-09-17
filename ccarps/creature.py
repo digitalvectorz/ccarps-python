@@ -49,6 +49,17 @@ class Creature:
 			'spiritual': 10
 		}
 
+		# Numbers are 2d6
+		# https://github.com/WizardSpire/ccarps/blob/master/Combat.md#hit-location-chart
+		self.body_parts = {
+			'head': 2,
+			'chest or upper back': [3, 4],
+			'abdomen or lower back': [5, 6, 7],
+			'leg': [8, 9],
+			'arm': [10, 11],
+			'neck, buttocks, or groin': [12]
+		}
+
 		# Set the initial stun timer.
 		self.stun_timer = 0
 
@@ -92,11 +103,16 @@ class Creature:
 		self.appearance = {}
 		self.background = {}
 
+		# Initial point allocation. Total should equal spent plus unspent.
+		# No points should be unspent post-character creation.
 		self.points = {
 			'spent': 0,
 			'unspent': 0,
 			'total': 0
 		}
+
+		self.points['unspent'] = self.STR + self.DEX + self.CON + self.INT + self.WIL
+		self.points['total'] = self.points['spent'] + self.points['unspent']
 
 		# https://github.com/WizardSpire/ccarps/blob/master/TechLevels.md
 		self.tech_level = 0
@@ -180,6 +196,27 @@ class Creature:
 
 		ret = {
 			type: amt_healed
+		}
+
+		return ret
+
+	def hit_location(self, roll):
+		'''
+		Return location that was struck.
+		'''
+		location = 'None'
+		
+		for key in self.body_parts.keys():
+			if isinstance(self.body_parts[key], list):
+				for n in self.body_parts[key]:
+					if roll is n:
+						location = key
+
+			if roll is self.body_parts[key]:
+				location = key
+
+		ret = {
+			'location': location
 		}
 
 		return ret

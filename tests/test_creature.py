@@ -15,6 +15,14 @@ def test_creature_distance():
 	assert distance['feet'] is 3
 
 
+def test_hit_location():
+	hit = c.hit_location(2)
+	assert hit['location'] is 'head'
+
+	hit = c.hit_location(6)
+	assert 'abdomen or lower back' in hit['location']
+
+
 def test_creature_stats():
 	assert type(c.CON) is int
 	assert type(c.INT) is int
