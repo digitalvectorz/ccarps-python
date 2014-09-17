@@ -36,7 +36,7 @@ class Creature:
 			self.name = name
 
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#starting-points
-		self.base = self.dice.random_stats(age=self.age, rank=self.rank)
+		base = self.dice.random_stats(age=self.age, rank=self.rank)
 
 		# Setting max health allows for modified health bars
 		self.max_health = {
@@ -54,11 +54,11 @@ class Creature:
 
 		# Primary Attributes
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#primary-attributes
-		self.STR = int(self.base[0])
-		self.DEX = int(self.base[1])
-		self.CON = int(self.base[2])
-		self.INT = int(self.base[3])
-		self.WIL = int(self.base[4])
+		self.STR = int(base[0])
+		self.DEX = int(base[1])
+		self.CON = int(base[2])
+		self.INT = int(base[3])
+		self.WIL = int(base[4])
 
 		# Secondary Attributes
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#secondary-attributes
