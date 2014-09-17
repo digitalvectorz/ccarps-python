@@ -5,6 +5,9 @@ from random import randint
 
 
 class Dice:
+	def __init__(self):
+		self.roll()
+
 	def roll(self, type=6, qty=1, sets=1, rerollone=0):
 		'''
 		Rolls qty of type of dice in sets.
