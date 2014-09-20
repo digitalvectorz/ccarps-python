@@ -30,7 +30,7 @@ setup(
 	install_requires=install_requires,
 	entry_points={
 		'console_scripts': [
-			'ccarps = ccarps.gate:ccarps_main'
+			'ccarps = ccarps:__init__'
 		],
 	},
 	packages=find_packages(),
@@ -41,7 +41,7 @@ setup(
 	maintainer='Sina Mashek',
 	maintainer_email='mashek@thescoundrels.net',
 	long_description=long_description,
-	description='CCARPS is a CC-licensed game framework.',
+	description='CCARPS is a Creative Commons-licensed game ruleset and framework.',
 	license='MIT',
 	url='http://wizardspire.com/ccarps',
 	platforms=['any'],
@@ -54,5 +54,7 @@ setup(
 		'Programming Language :: Python :: 2',
 		'Programming Language :: Python :: 2.6',
 		'Programming Language :: Python :: 2.7',
+		'Programming Language :: Python :: 3.2',
+		'Programming Language :: Python :: 3.3',
 	],
 )

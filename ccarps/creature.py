@@ -73,11 +73,14 @@ class Creature(object):
 
 		# Secondary Attributes
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#secondary-attributes
-		self.CHR = (self.CON + self.INT + self.WIL) / 3
-		self.SPD = (self.STR + self.DEX) / 2
-		self.RFX = (self.STR + self.DEX + self.WIL) / 3
-		self.LFT = (self.STR + self.WIL) / 2
-		self.PER = (self.INT + self.WIL) / 2
+		self.CHR = 0
+		self.SPD = 0
+		self.RFX = 0
+		self.LFT = 0
+		self.PER = 0
+
+		# Calculates the secondary attributes.
+		self.calc_secondary_attr()
 
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#prestige-prejudice-and-oddities
 		self.prestige = {}
@@ -260,3 +263,10 @@ class Creature(object):
 		}
 
 		return ret
+
+	def calc_secondary_attr(self):
+		self.CHR = (self.CON + self.INT + self.WIL) / 3
+		self.SPD = (self.STR + self.DEX) / 2
+		self.RFX = (self.STR + self.DEX + self.WIL) / 3
+		self.LFT = (self.STR + self.WIL) / 2
+		self.PER = (self.INT + self.WIL) / 2
