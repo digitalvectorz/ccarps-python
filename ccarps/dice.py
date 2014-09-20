@@ -4,7 +4,7 @@ import heapq
 from random import randint
 
 
-class Dice:
+class Dice(object):
 	def __init__(self):
 		self.roll()
 

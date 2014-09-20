@@ -6,7 +6,7 @@ from ccarps import dice, modifier
 # Covers:
 # * https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
 # * https://github.com/WizardSpire/ccarps/blob/master/Combat.md
-class Creature:
+class Creature(object):
 	'''
 	Set up us the Creature! (Monsters, (N)PCs)
 	'''
