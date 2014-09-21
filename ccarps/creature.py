@@ -214,7 +214,7 @@ class Creature(object):
 
 		# Add up each health
 		for health in self.health:
-			diff = self.max_health[health] - health
+			diff = self.max_health[health] - self.health[health]
 			if diff >= 1 and diff < 4:
 				health_mod += 1
 			if diff >= 4 and diff < 7:
