@@ -21,17 +21,20 @@ class Creature(object):
 
 		# Some defaults so that if creature.Creature() is invoked,
 		# a generic 21 year old human Novice will be created.
-		self.age = 21
-		self.rank = 'Novice'
-		self.name = 'Unnamed Human'
 
 		# Override the defaults if any parameters are passed.
 		if age is not None:
 			self.age = age
+		else:
+			self.age = 21
 		if rank is not None:
 			self.rank = rank
+		else:
+			self.rank = 'Novice'
 		if name is not None:
 			self.name = name
+		else:
+			self.name = 'Unnamed Human'
 
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#starting-points
 		base = self.dice.random_stats(age=self.age, rank=self.rank)
@@ -99,12 +102,8 @@ class Creature(object):
 		self.influence = 0
 
 		# Here's the skill handler dictionary.
-		# Default skills should be overwritten by skills, eventually.
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#skills
-		self.skills = {
-			'Attack': 1,  # Will never level up.
-			'Defend': 1   # Will never level up, either.
-		}
+		self.skills = {}
 
 		# Creature's appearance!
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#character-appearance
@@ -144,7 +143,10 @@ class Creature(object):
 		action_mod = 0
 		success = 0
 		num_dice = 2
-		tn = base_tn + action_mod
+		health_mod = self.health_mod()  # Will always be 0 or negative.
+
+		# To make things easy in ccarps, we always add.
+		tn = base_tn + action_mod + health_mod
 
 		if skill in self.skills:
 			skill_mod = modifier.get(self.skills[skill])
@@ -206,6 +208,22 @@ class Creature(object):
 				self.update_status(0)
 
 		return ret
+
+	def health_mod(self):
+		health_mod = 0
+
+		# Add up each health
+		for health in self.health:
+			diff = self.max_health[health] - health
+			if diff >= 1 and diff < 4:
+				health_mod += 1
+			if diff >= 4 and diff < 7:
+				health_mod += 2
+			if diff >= 6:
+				health_mod += 3
+
+		# Return it as a negative number, since it's bad.
+		return health_mod * -1
 
 	def heal(self, amount, type):
 		'''
