@@ -3,13 +3,13 @@
 from ccarps import modifier
 
 
-def test_find_mod():
-	ret = modifier.find(15)
+def test_get_mod():
+	ret = modifier.get(15)
 	assert ret is 5
 
 
 def test_find_mod_invalid():
-	ret = modifier.find(37)
+	ret = modifier.get(37)
 	assert ret == 'Invalid level'
 
 
@@ -24,19 +24,19 @@ def test_next_mod_invalid():
 
 
 def test_dice_mod():
-	mod = modifier.find(15)
+	mod = modifier.get(15)
 	ret = modifier.dice(mod)
 	assert ret is None
 
 
 def test_dice_mod_invalid():
-	mod = modifier.find(37)
+	mod = modifier.get(37)
 	ret = modifier.dice(mod)
 	assert ret == 'Invalid mod number.'
 
 
 def test_inverted_dice_mod():
-	mod = modifier.find(22)
+	mod = modifier.get(22)
 	ret = modifier.dice(mod, invert=1)
 	assert ret is 1
 

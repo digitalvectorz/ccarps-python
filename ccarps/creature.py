@@ -6,6 +6,7 @@ from ccarps import dice, modifier
 # Covers:
 # * https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
 # * https://github.com/WizardSpire/ccarps/blob/master/Combat.md
+# * https://github.com/WizardSpire/ccarps/blob/master/TechLevels.md
 class Creature(object):
 	'''
 	Set up us the Creature! (Monsters, (N)PCs)
@@ -98,8 +99,12 @@ class Creature(object):
 		self.influence = 0
 
 		# Here's the skill handler dictionary.
+		# Default skills should be overwritten by skills, eventually.
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#skills
-		self.skills = {}
+		self.skills = {
+			'Attack': 1,  # Will never level up.
+			'Defend': 1   # Will never level up, either.
+		}
 
 		# Creature's appearance!
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#character-appearance
@@ -120,6 +125,15 @@ class Creature(object):
 		# https://github.com/WizardSpire/ccarps/blob/master/TechLevels.md
 		self.tech_level = 0
 
+		self.modifiers = {
+			'attack': 0,
+			'defense': {
+				'Mental': 0,
+				'Physical': 0,
+				'Spiritual': 0
+			}
+		}
+
 	def action(self, skill, base_tn):
 		'''
 		Action handler for combat, using skill, or trying
@@ -132,7 +146,7 @@ class Creature(object):
 		tn = base_tn + action_mod
 
 		if skill in self.skills:
-			skill_mod = modifier.find(self.skills[skill])
+			skill_mod = modifier.get(self.skills[skill])
 			num_dice = 2 + modifier.dice(skill_mod)
 
 		roll = self.dice.roll(qty=num_dice)
