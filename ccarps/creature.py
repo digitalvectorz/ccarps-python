@@ -142,6 +142,7 @@ class Creature(object):
 
 		# Set the default action modifier and number of dice
 		action_mod = 0
+		success = 0
 		num_dice = 2
 		tn = base_tn + action_mod
 
@@ -150,10 +151,17 @@ class Creature(object):
 			num_dice = 2 + modifier.dice(skill_mod)
 
 		roll = self.dice.roll(qty=num_dice)
-		lowest = self.dice.low(roll)
+		lowest = self.dice.lowest(roll)
 
 		if lowest < tn:
-			return lowest
+			success = 1
+
+		ret = {
+			'roll': lowest,
+			'success': success
+		}
+
+		return ret
 
 	def take_damage(self, damage, type, tracker=None):
 		'''
