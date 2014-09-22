@@ -127,9 +127,9 @@ class Creature(object):
 		self.modifiers = {
 			'attack': 0,
 			'defense': {
-				'Mental': 0,
-				'Physical': 0,
-				'Spiritual': 0
+				'mental': 0,
+				'physical': 0,
+				'spiritual': 0
 			}
 		}
 
