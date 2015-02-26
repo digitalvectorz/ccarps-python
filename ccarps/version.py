@@ -2,5 +2,5 @@
 # -*- coding: utf-8 -*-
 
 __name__ = "ccarps"
-__version__ = "0.0.7-3"
-__rulesetversion__ = 'pre-1.0.0 testing'
+__version__ = "0.2.0"
+__rulesetversion__ = '0.9.2'

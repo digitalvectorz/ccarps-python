@@ -3,7 +3,7 @@
 from ccarps import creature
 
 
-c = creature.Creature(rank='Beginner', name='Test Creature')
+c = creature.Creature(name='Test Creature')
 
 
 def test_creature_name():
@@ -53,16 +53,29 @@ def test_creature_heal():
 	for health in c.health:
 		assert c.health[health] is 10
 
+def test_creature_death():
+	for health in c.health:
+		assert c.health[health] is 10
+
+	damage = c.take_damage(40, 'mental')
+
+	for health in c.health.values():
+		assert health is 0
+
+	assert c.status is 0
+
+	for health in c.health:
+		c.heal(10, health)
+
+	c.status = 2
+
 
 def test_creature_complex_damage():
 	for health in c.health:
 		assert c.health[health] is 10
+		assert c.status is 2
 
 	damage = c.take_damage(25, 'mental')
-
-	assert damage['mental'] is 10
-	assert damage['physical'] is 10
-	assert damage['spiritual'] is 5
 
 	assert c.health['mental'] is 0
 	assert c.health['physical'] is 0
@@ -85,14 +98,14 @@ def test_creature_complex_damage():
 	assert c.health['spiritual'] is 1
 	
 	c.take_damage(1, 'spiritual')
-	assert c.status is 0
+	assert c.status is 1
 
 
 def test_update_status():
-	assert c.status is 0
-	
-	status_update = c.update_status(1)
-
-	assert status_update['was'] is 0
-	assert status_update['now'] is 1
 	assert c.status is 1
+	
+	status_update = c.update_status(2)
+
+	assert status_update['was'] is 1
+	assert status_update['now'] is 2
+	assert c.status is 2

@@ -31,34 +31,6 @@ def test_dice_lowest():
 	assert roll > 1 and roll < 13
 
 
-def test_random_stats_novice():
-	age = 18
-	rank = 'Novice'
-	stats = d.random_stats(age, rank)
-
-	assert len(stats) is 5
-
-	for die in stats:
-		assert die > 1
-
-	age = 16
-	stats = d.random_stats(age, rank)
-
-	assert stats is False
-
-
-def test_random_stats_advanced():
-	age = 16
-	rank = 'Advanced'
-	stats = d.random_stats(age, rank)
-
-	assert stats is False
-
-	age = 22
-	stats = d.random_stats(age, rank)
-	assert len(stats) is 5
-
-
 def assert_dice(qty, sets):
 	roll = d.roll(qty=qty, sets=sets)
 

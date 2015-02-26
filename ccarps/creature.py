@@ -4,42 +4,38 @@ from ccarps import dice, modifier
 
 
 # Covers:
-# * https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
+# * https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md
 # * https://github.com/WizardSpire/ccarps/blob/master/Combat.md
-# * https://github.com/WizardSpire/ccarps/blob/master/TechLevels.md
+# * https://github.com/WizardSpire/ccarps/blob/master/Tech_Levels.md
 class Creature(object):
 	'''
 	Set up us the Creature! (Monsters, (N)PCs)
 	'''
-	def __init__(self, age=None, rank=None, name=None):
+	def __init__(self, age=None, name=None):
 		# Initialize dice system
 		self.dice = dice.Dice()
 		self.roll = 0
 	
-		# Dead: -1 = undead, 0 = dead, 1 = alive(normal), 2 = alive(polymorphed)
-		self.status = 1
+		# Dead: -1 = undead, 0 = dead, 1 = unconscious, 2 = alive(normal), 3= alive(polymorphed)
+		self.status = 2
 
 		# Some defaults so that if creature.Creature() is invoked,
-		# a generic 21 year old human Novice will be created.
+		# a generic 21 year old human will be created.
 
 		# Override the defaults if any parameters are passed.
 		if age is not None:
 			self.age = age
 		else:
 			self.age = 21
-		if rank is not None:
-			self.rank = rank
-		else:
-			self.rank = 'Novice'
 		if name is not None:
 			self.name = name
 		else:
 			self.name = 'Unnamed Human'
 
-		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#starting-points
-		base = self.dice.random_stats(age=self.age, rank=self.rank)
+		# https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md#starting-points
+		base = self.dice.random_stats(age=self.age)
 
-		# Setting max health allows for modified health bars
+		# Setting max health allows for modified health bars.
 		self.max_health = {
 			'mental': 10,
 			'physical': 10,
@@ -47,6 +43,7 @@ class Creature(object):
 		}
 
 		# Set initial health as full.
+		# https://github.com/WizardSpire/ccarps/blob/master/Combat.md#damage-levels
 		self.health = {
 			'mental': 10,
 			'physical': 10,
@@ -64,11 +61,8 @@ class Creature(object):
 			'neck, buttocks, or groin': [12]
 		}
 
-		# Set the initial stun timer.
-		self.stun_timer = 0
-
 		# Primary Attributes
-		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#primary-attributes
+		# https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md#primary-attributes
 		self.STR = base[0]
 		self.DEX = base[1]
 		self.CON = base[2]
@@ -77,60 +71,67 @@ class Creature(object):
 
 		# Secondary Attributes
 		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#secondary-attributes
-		self.CHR = 0
+		self.CHA = 0
 		self.SPD = 0
 		self.RFX = 0
 		self.LFT = 0
 		self.PER = 0
 
-		# Calculates the secondary attributes.
-		self.calc_secondary_attr()
+		# Set Secondary Attribute Modifiers.
+		self.get_attribute_modifiers()
 
-		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#prestige-prejudice-and-oddities
-		self.prestige = {}
-		self.prejudice = {}
-		self.oddities = {}
-
-		# Denotes which wealth "class" (if any) the creature is from.
-		# 0 is average/middle, and this is not always needed in every
-		# game or world setting.
-		#
-		# Influence dictates followers / contacts, but again, is not
-		# necessary for all game types.
-		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#wealth-and-influence
-		self.wealth = 0
-		self.influence = 0
-
-		# Here's the skill handler dictionary.
-		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#skills
-		self.skills = {}
-
-		# Creature's appearance!
-		# https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md#character-appearance
-		self.appearance = {}
-		self.background = {}
-
-		# Initial point allocation. Total should equal spent plus unspent.
-		# No points should be unspent post-character creation.
+		# Total Points
+		# https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md#starting-points
 		self.points = {
-			'spent': 0,
-			'unspent': 0,
+			'spent': {
+				'STR': 0,
+				'DEX': 0,
+				'CON': 0,
+				'INT': 0,
+				'WIL': 0,
+				'Skills': 0,
+				'Oddities': 0
+			},
+			'accumulator': {
+				'STR': 0,
+				'DEX': 0,
+				'CON': 0,
+				'INT': 0,
+				'WIL': 0
+			},
+			'unspent': self.STR + self.DEX + self.CON + self.INT + self.WIL,
 			'total': 0
 		}
 
-		self.points['unspent'] = self.STR + self.DEX + self.CON + self.INT + self.WIL
-		self.points['total'] = self.points['spent'] + self.points['unspent']
+		# Setting our inital total points.
+		self.points['total'] = sum(self.points['spent'].itervalues()) + self.points['unspent']
 
-		# https://github.com/WizardSpire/ccarps/blob/master/TechLevels.md
+		# Oddities
+		# https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md#character-creation-specific-oddities
+		self.oddities = {
+			'Wealth': 0,
+			'Social Influence': 0
+		}
+
+		self.contacts = {}
+
+		# Skills
+		# https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md#skills
+		self.skills = {}
+
+		# Character Apperance
+		# https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md#character-appearance
+		self.appearance = {}
+		self.background = {}
+
+		# https://github.com/WizardSpire/ccarps/blob/master/Tech_Levels.md
 		self.tech_level = 0
 
 		self.modifiers = {
-			'attack': 0,
-			'defense': {
-				'mental': 0,
-				'physical': 0,
-				'spiritual': 0
-			}
+			'mental': 0,
+			'physical': 0,
+			'spiritual': 0,
+			'resistance': {},
 		}
 
 	def action(self, skill, base_tn):
@@ -158,14 +159,12 @@ class Creature(object):
 		if lowest < tn:
 			success = 1
 
-		ret = {
+		return {
 			'roll': lowest,
 			'success': success
 		}
 
-		return ret
-
-	def take_damage(self, damage, type, tracker=None):
+	def take_damage(self, damage, dtype, tracker=None):
 		'''
 		Take damage. If any damage is greater than 10, move to
 		the next health type. If all three are 0, set status to 0.
@@ -173,7 +172,7 @@ class Creature(object):
 		Returns nothing on success, as it directly modifies self.health.
 		'''
 		# Catch any invalid health types and return with list of available.
-		if type not in self.health:
+		if dtype not in self.health:
 			return "Invalid damage type. Available: %s" % ', '.join(self.health)
 
 		# Lets us keep track of total damage of each heal type
@@ -183,29 +182,35 @@ class Creature(object):
 		if tracker is not None:
 			ret = tracker
 
+		status = self.health_check()
+		if status['now'] is 0:
+			return ret
+
 		# Apply initial damage to approriate type
-		self.health[type] -= damage
+		self.health[dtype] -= damage
 
 		# Get a copy so we can get the difference later.
-		ret[type] = damage
+		ret[dtype] = damage
 
 		# If negative number, set value to 0
 		# Set damage to equal the negative remainder,
 		# and reverse it to positive.
-		if self.health[type] <= 0:
-			damage = -self.health[type]
-			self.health[type] = 0
+		if self.health[dtype] <= 0:
+			damage = -self.health[dtype]
+			self.health[dtype] = 0
 
 			# Get the difference so we have number of points healed.
-			ret[type] -= damage
+			ret[dtype] -= damage
 
 			# Apply damage to the next health type.
-			if type is 'mental':
+			if dtype is 'mental':
 				self.take_damage(damage, 'physical', ret)
-			if type is 'physical':
+
+			if dtype is 'physical':
 				self.take_damage(damage, 'spiritual', ret)
-			if type is 'spiritual' or self.health['spiritual'] is 0:
-				self.update_status(0)
+
+			if dtype is 'spiritual' or self.health['spiritual'] is 0:
+				self.take_damage(damage, 'mental')
 
 		return ret
 
@@ -215,15 +220,58 @@ class Creature(object):
 		# Add up each health
 		for health in self.health:
 			diff = self.max_health[health] - self.health[health]
-			if diff >= 1 and diff < 4:
+			if diff >= 1 and diff < 5:
 				health_mod += 1
-			if diff >= 4 and diff < 7:
+			if diff >= 5 and diff < 8:
 				health_mod += 2
-			if diff >= 6:
+			if diff >= 8:
 				health_mod += 3
 
 		# Return it as a negative number, since it's bad.
 		return health_mod * -1
+
+	def unconscious_dying(self):
+		'''
+		This should be called only once per turn (or x seconds) when
+		the character is unconscious.
+
+		Returns damage taken, or None if not unconscious.
+		'''
+		damaged = None
+
+		if self.status is 1:
+			roll = self.dice.roll(qty=2)
+
+			if roll >= self.CHA:
+				damaged = 1
+				self.take_damage(1, 'mental')
+			
+		return damaged
+
+	def health_check(self):
+		'''
+		Checks for health status.
+
+		Returns result of self.update_status()
+		'''
+		if self.status is 0:
+			return self.update_status(0)
+
+		total_health = sum(self.health.values())
+		status = self.status
+
+		# If character has no health, they are dead.
+		if total_health is 0:
+			return self.update_status(0)
+
+		# If any health types are 1, character is unconscious.
+		# There's probably a better way to do this.
+		for num in self.health.values():
+			if num is 0:
+				status = 1
+
+		return self.update_status(status)
+
 
 	def heal(self, amount, type):
 		'''
@@ -304,9 +352,9 @@ class Creature(object):
 
 		return ret
 
-	def calc_secondary_attr(self):
-		self.CHR = (self.CON + self.INT + self.WIL) / 3
-		self.SPD = (self.STR + self.DEX) / 2
-		self.RFX = (self.STR + self.DEX + self.WIL) / 3
-		self.LFT = (self.STR + self.WIL) / 2
-		self.PER = (self.INT + self.WIL) / 2
+	def get_attribute_modifiers(self):
+		self.CHA = modifier.get((self.CON + self.INT + self.WIL) / 3)
+		self.SPD = modifier.get((self.STR + self.DEX) / 2)
+		self.RFX = modifier.get((self.STR + self.DEX + self.WIL) / 3)
+		self.LFT = modifier.get((self.STR + self.WIL) / 2)
+		self.PER = modifier.get((self.INT + self.WIL) / 2)
