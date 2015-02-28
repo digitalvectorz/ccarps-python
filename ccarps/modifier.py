@@ -18,6 +18,8 @@ inv_dice_mod = {
 
 
 def get(level):
+	if level < 0:
+		return 0
 	if 1 <= level <= 2:
 		return 1
 	if 3 <= level <= 5:
@@ -38,7 +40,7 @@ def get(level):
 
 
 def dice(mod, invert=0):
-	if not isinstance(mod, int) or mod > 8:
+	if not isinstance(mod, int) or mod > 8 or mod is 0:
 		return 0
 
 	dmod = dice_mod
@@ -51,6 +53,6 @@ def dice(mod, invert=0):
 
 
 def next(level):
-	if get(level) < 8:
+	if get(level) < 8 and get(level) is not 0:
 		return get(level) + 1
-	return None
+	return 0

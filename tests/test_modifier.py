@@ -10,7 +10,7 @@ def test_get_mod():
 
 def test_find_mod_invalid():
 	ret = modifier.get(37)
-	assert ret == 'Invalid level'
+	assert ret is 0
 
 
 def test_next_mod():
@@ -20,8 +20,7 @@ def test_next_mod():
 
 def test_next_mod_invalid():
 	ret = modifier.next(39)
-	assert ret is None
-
+	assert ret is 0
 
 def test_dice_mod():
 	mod = modifier.get(15)
@@ -32,7 +31,7 @@ def test_dice_mod():
 def test_dice_mod_invalid():
 	mod = modifier.get(37)
 	ret = modifier.dice(mod)
-	assert ret == 'Invalid mod number.'
+	assert ret is 0
 
 
 def test_inverted_dice_mod():
@@ -43,4 +42,4 @@ def test_inverted_dice_mod():
 
 def test_inverted_dice_mod_invalid():
 	ret = modifier.dice(37, invert=1)
-	assert ret == 'Invalid mod number.'
+	assert ret is 0
