@@ -64,8 +64,7 @@ class Dice(object):
 
 	def random_stats(self, age):
 		'''
-		Needs to encompass both Options A and B
-		https://github.com/WizardSpire/ccarps/blob/master/CharacterCreation.md
+		https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md
 		'''
 
 		dice_qty = self.by_age(age)

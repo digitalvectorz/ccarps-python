@@ -34,12 +34,12 @@ def get(level):
 		return 7
 	if level is 36:
 		return 8
-	return 'Invalid level'
+	return 0
 
 
 def dice(mod, invert=0):
 	if not isinstance(mod, int) or mod > 8:
-		return 'Invalid mod number.'
+		return 0
 
 	dmod = dice_mod
 	
