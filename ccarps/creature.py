@@ -16,7 +16,7 @@ class Creature(object):
 		self.dice = dice.Dice()
 		self.roll = 0
 	
-		# Dead: -1 = undead, 0 = dead, 1 = unconscious, 2 = alive(normal), 3= alive(polymorphed)
+		# Dead: -1 = undead, 0 = dead, 1 = unconscious, 2 = alive, 3 = polymorphed
 		self.status = 2
 
 		# Some defaults so that if creature.Creature() is invoked,
@@ -104,7 +104,7 @@ class Creature(object):
 		}
 
 		# Setting our inital total points.
-		self.points['total'] = sum(self.points['spent'].itervalues()) + self.points['unspent']
+		self.points['total'] = sum(self.points['spent'].itervalues()) + self.points['unspent']  # NOQA
 
 		# Oddities
 		# https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md#character-creation-specific-oddities
@@ -271,7 +271,6 @@ class Creature(object):
 				status = 1
 
 		return self.update_status(status)
-
 
 	def heal(self, amount, type):
 		'''

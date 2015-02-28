@@ -53,11 +53,12 @@ def test_creature_heal():
 	for health in c.health:
 		assert c.health[health] is 10
 
+
 def test_creature_death():
 	for health in c.health:
 		assert c.health[health] is 10
 
-	damage = c.take_damage(40, 'mental')
+	c.take_damage(40, 'mental')
 
 	for health in c.health.values():
 		assert health is 0
@@ -75,7 +76,7 @@ def test_creature_complex_damage():
 		assert c.health[health] is 10
 		assert c.status is 2
 
-	damage = c.take_damage(25, 'mental')
+	c.take_damage(25, 'mental')
 
 	assert c.health['mental'] is 0
 	assert c.health['physical'] is 0

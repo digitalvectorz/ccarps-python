@@ -22,6 +22,7 @@ def test_next_mod_invalid():
 	ret = modifier.next(39)
 	assert ret is 0
 
+
 def test_dice_mod():
 	mod = modifier.get(15)
 	ret = modifier.dice(mod)

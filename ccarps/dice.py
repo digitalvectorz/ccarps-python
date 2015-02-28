@@ -61,7 +61,6 @@ class Dice(object):
 		if age < 6:
 			return 1
 
-
 	def random_stats(self, age):
 		'''
 		https://github.com/WizardSpire/ccarps/blob/master/Character_Creation.md
